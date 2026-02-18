@@ -6,21 +6,39 @@ import {
   ForeignKey,
   BelongsTo,
 } from 'sequelize-typescript';
+import { Optional } from 'sequelize';
 import { User } from '../users/user.model';
 import { Event } from '../events/event.model';
-import { Optional } from 'sequelize';
+
+/* ---------- ENUM ---------- */
+
+export enum BookingStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  CANCELLED = 'CANCELLED',
+  EXPIRED = 'EXPIRED',
+}
+
+/* ---------- ATTRIBUTES ---------- */
 
 interface BookingAttributes {
   id: number;
   userId: number;
   eventId: number;
-  quantity: number;
-  seats?: string[]; // For limited events
+  quantity?: number; // Used for UNLIMITED events
+  totalPrice: number;
+  status: BookingStatus;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
-type BookingCreationAttributes = Optional<BookingAttributes, 'id' | 'seats'>;
+type BookingCreationAttributes = Optional<BookingAttributes, 'id' | 'status'>;
 
-@Table({ tableName: 'bookings' })
+/* ---------- MODEL ---------- */
+
+@Table({
+  tableName: 'bookings',
+})
 export class Booking extends Model<
   BookingAttributes,
   BookingCreationAttributes
@@ -32,12 +50,19 @@ export class Booking extends Model<
   })
   declare id: number;
 
+  /* ---------- USER RELATION ---------- */
+
   @ForeignKey(() => User)
   @Column({
     type: DataType.BIGINT,
     allowNull: false,
   })
   declare userId: number;
+
+  @BelongsTo(() => User)
+  declare user: User;
+
+  /* ---------- EVENT RELATION ---------- */
 
   @ForeignKey(() => Event)
   @Column({
@@ -46,20 +71,27 @@ export class Booking extends Model<
   })
   declare eventId: number;
 
-  @Column({
-    allowNull: false,
-  })
-  declare quantity: number;
-
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),
-    allowNull: true,
-  })
-  declare seats: string[];
-
-  @BelongsTo(() => User)
-  declare user: User;
-
   @BelongsTo(() => Event)
   declare event: Event;
+
+  /* ---------- BOOKING DATA ---------- */
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  declare quantity: number; // Only for UNLIMITED events
+
+  @Column({
+    type: DataType.FLOAT,
+    allowNull: false,
+  })
+  declare totalPrice: number;
+
+  @Column({
+    type: DataType.ENUM(...Object.values(BookingStatus)),
+    allowNull: false,
+    defaultValue: BookingStatus.PENDING,
+  })
+  declare status: BookingStatus;
 }
