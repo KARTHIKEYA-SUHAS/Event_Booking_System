@@ -7,6 +7,7 @@ import { EventsModule } from './events/events.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { Event } from './events/event.model';
 import { Booking } from './bookings/booking.model';
+import { SeatCategory } from './events/seat.category.model';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { Booking } from './bookings/booking.model';
       username: 'postgres',
       password: 'postgres',
       database: 'Event_Booking_System',
-      models: [User, Event, Booking], // ✅ FIXED
+      models: [User, Event, Booking, SeatCategory], // ✅ FIXED
       autoLoadModels: true,
       sync: {
         alter: true,
@@ -27,6 +28,7 @@ import { Booking } from './bookings/booking.model';
     UsersModule,
     EventsModule,
     BookingsModule,
+    SeatCategory,
   ],
 })
 export class AppModule {}

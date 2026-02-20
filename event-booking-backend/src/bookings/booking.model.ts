@@ -26,6 +26,7 @@ interface BookingAttributes {
   userId: number;
   eventId: number;
   quantity?: number; // Used for UNLIMITED events
+  seatNumber?: string; // Used for LIMITED events
   totalPrice: number;
   status: BookingStatus;
   createdAt?: Date;
