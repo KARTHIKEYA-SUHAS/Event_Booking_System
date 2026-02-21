@@ -5,10 +5,12 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
+  HasMany,
 } from 'sequelize-typescript';
 import { Optional } from 'sequelize';
 import { User } from '../users/user.model';
 import { CreatedAt, UpdatedAt } from 'sequelize-typescript';
+import { Seat } from 'src/seats/seat.model';
 
 export enum EventType {
   LIMITED = 'LIMITED',
@@ -92,12 +94,6 @@ export class Event extends Model<EventAttributes, EventCreationAttributes> {
   })
   declare availableSeats: number;
 
-  @CreatedAt
-  declare createdAt: Date;
-
-  @UpdatedAt
-  declare updatedAt: Date;
-
   @ForeignKey(() => User)
   @Column({
     type: DataType.BIGINT,
@@ -107,4 +103,13 @@ export class Event extends Model<EventAttributes, EventCreationAttributes> {
 
   @BelongsTo(() => User)
   declare organizer: User;
+
+  @HasMany(() => Seat)
+  seats: Seat[];
+
+  @CreatedAt
+  declare createdAt: Date;
+
+  @UpdatedAt
+  declare updatedAt: Date;
 }

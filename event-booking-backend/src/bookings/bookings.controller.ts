@@ -2,35 +2,47 @@ import {
   Controller,
   Post,
   Body,
-  UseGuards,
-  Request,
   Get,
+  UseGuards,
+  Param,
+  Req,
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import { AuthGuard } from '@nestjs/passport';
-import { Request as ExpressRequest } from 'express';
-
-interface AuthRequest extends ExpressRequest {
-  user: {
-    userId: number;
-    email: string;
-    role: string;
-  };
-}
+import { Request } from 'express';
 
 @Controller('bookings')
 export class BookingsController {
-  constructor(private bookingsService: BookingsService) {}
+  constructor(private readonly bookingsService: BookingsService) {}
 
+  /* CREATE BOOKING */
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  createBooking(@Body() dto: CreateBookingDto, @Request() req: AuthRequest) {
-    return this.bookingsService.createBooking(req.user.userId, dto);
+  createBooking(
+    @Body() dto: CreateBookingDto,
+    @Req() req: Request & { user: { userId: number } },
+  ) {
+    return this.bookingsService.createBooking(dto, req.user.userId);
   }
 
-  @Get()
-  findAll() {
-    return this.bookingsService.findAll();
+  /* GET SINGLE BOOKING */
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':id')
+  getBooking(
+    @Param('id') id: string,
+    @Req() req: Request & { user: { userId: number } },
+  ) {
+    return this.bookingsService.getBookingById(Number(id), req.user.userId);
+  }
+
+  /* PAY BOOKING */
+  @UseGuards(AuthGuard('jwt'))
+  @Post(':id/pay')
+  payBooking(
+    @Param('id') id: string,
+    @Req() req: Request & { user: { userId: number } },
+  ) {
+    return this.bookingsService.payBooking(Number(id), req.user.userId);
   }
 }

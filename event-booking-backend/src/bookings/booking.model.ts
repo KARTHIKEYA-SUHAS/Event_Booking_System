@@ -9,6 +9,8 @@ import {
 import { Optional } from 'sequelize';
 import { User } from '../users/user.model';
 import { Event } from '../events/event.model';
+import { HasMany } from 'sequelize-typescript';
+import { BookingSeat } from './booking-seat.model';
 
 /* ---------- ENUM ---------- */
 
@@ -81,13 +83,7 @@ export class Booking extends Model<
     type: DataType.INTEGER,
     allowNull: true,
   })
-  declare quantity: number; // Only for UNLIMITED events
-
-  @Column({
-    type: DataType.FLOAT,
-    allowNull: false,
-  })
-  declare totalPrice: number;
+  declare quantity: number;
 
   @Column({
     type: DataType.ENUM(...Object.values(BookingStatus)),
@@ -95,4 +91,13 @@ export class Booking extends Model<
     defaultValue: BookingStatus.PENDING,
   })
   declare status: BookingStatus;
+
+  @HasMany(() => BookingSeat)
+  declare bookingSeats: BookingSeat[]; // Only for UNLIMITED events
+
+  @Column({
+    type: DataType.FLOAT,
+    allowNull: false,
+  })
+  declare totalPrice: number;
 }

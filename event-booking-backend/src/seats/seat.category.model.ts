@@ -5,9 +5,11 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
+  HasMany,
 } from 'sequelize-typescript';
 import { Optional } from 'sequelize';
-import { Event } from './event.model';
+import { Event } from '../events/event.model';
+import { Seat } from './seat.model';
 
 /* ---------- ATTRIBUTES ---------- */
 
@@ -84,4 +86,7 @@ export class SeatCategory extends Model<
     allowNull: false,
   })
   declare startingRowLetter: string;
+
+  @HasMany(() => Seat)
+  seats: Seat[];
 }
