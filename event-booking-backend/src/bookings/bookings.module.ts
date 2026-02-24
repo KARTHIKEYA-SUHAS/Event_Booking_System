@@ -6,9 +6,12 @@ import { BookingsService } from './bookings.service';
 import { BookingsController } from './bookings.controller';
 import { BookingSeat } from './booking-seat.model';
 import { Seat } from 'src/seats/seat.model';
+import { Payment } from 'src/payments/payment.model';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Booking, Event, Seat, BookingSeat])],
+  imports: [
+    SequelizeModule.forFeature([Booking, Event, Seat, BookingSeat, Payment]),
+  ],
   providers: [BookingsService],
   controllers: [BookingsController],
 })

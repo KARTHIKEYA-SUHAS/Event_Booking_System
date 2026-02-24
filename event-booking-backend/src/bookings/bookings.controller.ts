@@ -1,11 +1,13 @@
 import {
   Controller,
   Post,
+  Patch,
   Body,
   Get,
   UseGuards,
   Param,
   Req,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
@@ -44,5 +46,18 @@ export class BookingsController {
     @Req() req: Request & { user: { userId: number } },
   ) {
     return this.bookingsService.payBooking(Number(id), req.user.userId);
+  }
+
+  @Patch(':id/cancel')
+  @UseGuards(AuthGuard('jwt'))
+  async cancelBooking(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: Request & { user: { userId: number; role: string } },
+  ) {
+    return this.bookingsService.cancelBooking(
+      id,
+      req.user.userId,
+      req.user.role,
+    );
   }
 }

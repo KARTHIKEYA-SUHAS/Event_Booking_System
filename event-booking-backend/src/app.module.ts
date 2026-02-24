@@ -13,6 +13,7 @@ import { Booking } from './bookings/booking.model';
 import { Seat } from './seats/seat.model';
 import { BookingSeat } from './bookings/booking-seat.model';
 import { SeatCategory } from './seats/seat.category.model';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { SeatCategory } from './seats/seat.category.model';
     UsersModule,
     EventsModule,
     BookingsModule,
-    SeatsModule, // ✅ Only module here
+    SeatsModule,
+    PaymentsModule,
   ],
 })
 export class AppModule {}
